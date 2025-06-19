@@ -33,29 +33,14 @@ def load_or_train_model():
     else:
         return train_model()
 
-# def predict_direction(model, waiting_NS, waiting_EW):
-#     if model is None:
-#         return "NS" if waiting_NS >= waiting_EW else "EW"
-#     prediction = model.predict([[waiting_NS, waiting_EW]])[0]
-#     return "NS" if prediction == 0 else "EW"
-
-# def predict_direction(model, waiting_ns, waiting_ew):
-#     """
-#     Prédit la direction à passer au vert.
-#     Ici, on fait simple : on choisit le côté avec le plus de voitures en attente.
-#     Si égalité, on garde NS.
-#     """
-#     if waiting_ew > waiting_ns:
-#         return "EW"
-#     else:
-#         return "NS"
-
 def predict_direction(model, waiting_NS, waiting_EW):
     if model is None:
-        # Laisser passer la direction la plus encombrée
-        if abs(waiting_NS - waiting_EW) <= 2:
-            return "NS"  # Moins de changements inutiles
-        return "NS" if waiting_NS > waiting_EW else "EW"
+        return "NS" if waiting_NS >= waiting_EW else "EW"
+    # 1. Créer un DataFrame pour la prédiction avec les bons noms de colonnes
+    feature_names = ['waiting_NS', 'waiting_EW']
+    data_to_predict = pd.DataFrame([[waiting_NS, waiting_EW]], columns=feature_names)
 
-    prediction = model.predict([[waiting_NS, waiting_EW]])[0]
+    # 2. Faire la prédiction sur ce DataFrame
+    prediction = model.predict(data_to_predict)[0]
+    # prediction = model.predict([[waiting_NS, waiting_EW]])[0]
     return "NS" if prediction == 0 else "EW"
